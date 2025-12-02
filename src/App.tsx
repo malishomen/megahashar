@@ -22,6 +22,19 @@ function App() {
 
   return (
     <div className="app">
+      {/* Видео-фон на всю страницу */}
+      <div className="video-background">
+        <video
+          className="video-background__media"
+          src="/megahashar/assets/megaheart_bg.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+        <div className="video-background__overlay"></div>
+      </div>
+      
       <ThreeScene />
       <Header />
       

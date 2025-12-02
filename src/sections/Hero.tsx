@@ -86,16 +86,9 @@ const Hero: React.FC = () => {
           </div>
           
           <div className="hero-visual">
-            <div className="hero-heart-video">
-              <video
-                className="hero-heart-video__media"
-                src="/megahashar/assets/megaheart_bg.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-              />
-              <div className="hero-heart-video__overlay"></div>
+            {/* Видео теперь на общем фоне, здесь можно добавить дополнительный контент */}
+            <div className="hero-visual-accent">
+              <div className="accent-glow"></div>
             </div>
           </div>
         </div>
@@ -216,7 +209,7 @@ const Hero: React.FC = () => {
           transform: translateY(-3px);
         }
         
-        /* Видео-блок с кибер-сердцем */
+        /* Акцентный блок справа (вместо видео) */
         .hero-visual {
           display: flex;
           justify-content: center;
@@ -224,36 +217,38 @@ const Hero: React.FC = () => {
           position: relative;
         }
         
-        .hero-heart-video {
+        .hero-visual-accent {
           position: relative;
           width: 100%;
           max-width: 600px;
-          aspect-ratio: 16 / 9;
-          border-radius: 20px;
-          overflow: hidden;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+          height: 500px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         
-        .hero-heart-video__media {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          display: block;
-        }
-        
-        .hero-heart-video__overlay {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
+        .accent-glow {
+          width: 300px;
+          height: 300px;
           background: radial-gradient(
-            circle at center,
-            transparent 30%,
-            rgba(10, 25, 47, 0.3) 70%,
-            rgba(10, 25, 47, 0.6) 100%
+            circle,
+            rgba(220, 38, 38, 0.3) 0%,
+            rgba(0, 188, 212, 0.2) 50%,
+            transparent 70%
           );
-          pointer-events: none;
+          border-radius: 50%;
+          animation: pulse-glow 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-glow {
+          0%, 100% { 
+            transform: scale(1);
+            opacity: 0.6;
+          }
+          50% { 
+            transform: scale(1.2);
+            opacity: 1;
+          }
         }
         
         @media (max-width: 1024px) {
@@ -279,8 +274,13 @@ const Hero: React.FC = () => {
             justify-content: center;
           }
           
-          .hero-heart-video {
-            max-width: 500px;
+          .hero-visual-accent {
+            height: 400px;
+          }
+          
+          .accent-glow {
+            width: 250px;
+            height: 250px;
           }
         }
         
@@ -297,8 +297,13 @@ const Hero: React.FC = () => {
             flex-direction: column;
           }
           
-          .hero-heart-video {
-            max-width: 100%;
+          .hero-visual-accent {
+            height: 300px;
+          }
+          
+          .accent-glow {
+            width: 200px;
+            height: 200px;
           }
         }
       `}</style>
