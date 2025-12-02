@@ -86,9 +86,17 @@ const Hero: React.FC = () => {
           </div>
           
           <div className="hero-visual">
-            {/* Видео теперь на общем фоне, здесь можно добавить дополнительный контент */}
-            <div className="hero-visual-accent">
-              <div className="accent-glow"></div>
+            {/* Видео hero.mp4 в hero-секции */}
+            <div className="hero-video-container">
+              <video
+                className="hero-video"
+                src="/megahashar/assets/hero.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+              />
+              <div className="hero-video-overlay"></div>
             </div>
           </div>
         </div>
@@ -209,7 +217,7 @@ const Hero: React.FC = () => {
           transform: translateY(-3px);
         }
         
-        /* Акцентный блок справа (вместо видео) */
+        /* Hero видео справа */
         .hero-visual {
           display: flex;
           justify-content: center;
@@ -217,38 +225,36 @@ const Hero: React.FC = () => {
           position: relative;
         }
         
-        .hero-visual-accent {
+        .hero-video-container {
           position: relative;
           width: 100%;
           max-width: 600px;
-          height: 500px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          aspect-ratio: 16 / 9;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
         
-        .accent-glow {
-          width: 300px;
-          height: 300px;
+        .hero-video {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+        
+        .hero-video-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
           background: radial-gradient(
-            circle,
-            rgba(220, 38, 38, 0.3) 0%,
-            rgba(0, 188, 212, 0.2) 50%,
-            transparent 70%
+            circle at center,
+            transparent 20%,
+            rgba(10, 25, 47, 0.2) 60%,
+            rgba(10, 25, 47, 0.4) 100%
           );
-          border-radius: 50%;
-          animation: pulse-glow 3s ease-in-out infinite;
-        }
-        
-        @keyframes pulse-glow {
-          0%, 100% { 
-            transform: scale(1);
-            opacity: 0.6;
-          }
-          50% { 
-            transform: scale(1.2);
-            opacity: 1;
-          }
+          pointer-events: none;
         }
         
         @media (max-width: 1024px) {
@@ -274,13 +280,8 @@ const Hero: React.FC = () => {
             justify-content: center;
           }
           
-          .hero-visual-accent {
-            height: 400px;
-          }
-          
-          .accent-glow {
-            width: 250px;
-            height: 250px;
+          .hero-video-container {
+            max-width: 500px;
           }
         }
         
@@ -297,13 +298,8 @@ const Hero: React.FC = () => {
             flex-direction: column;
           }
           
-          .hero-visual-accent {
-            height: 300px;
-          }
-          
-          .accent-glow {
-            width: 200px;
-            height: 200px;
+          .hero-video-container {
+            max-width: 100%;
           }
         }
       `}</style>

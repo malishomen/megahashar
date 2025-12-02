@@ -60,6 +60,7 @@ body.loaded {
   height: auto;
   transform: translate(-50%, -50%);
   object-fit: cover;
+  filter: blur(3px);
 }
 
 .video-background__overlay {

@@ -21,11 +21,11 @@ function App() {
 
   return (
     <div className="app">
-      {/* Видео-фон на всю страницу */}
+      {/* Видео-фон на всю страницу (background.mp4) */}
       <div className="video-background">
         <video
           className="video-background__media"
-          src="/megahashar/assets/megaheart_bg.mp4"
+          src="/megahashar/assets/background.mp4"
           autoPlay
           loop
           muted
