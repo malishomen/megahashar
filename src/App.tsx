@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import ThreeScene from './components/ThreeScene';
 import Hero from './sections/Hero';
 import Mission from './sections/Mission';
 import Whitepaper from './sections/Whitepaper';
@@ -35,7 +34,7 @@ function App() {
         <div className="video-background__overlay"></div>
       </div>
       
-      <ThreeScene />
+      {/* ThreeScene убран - видео должно быть видно */}
       <Header />
       
       <main className="main-content">
