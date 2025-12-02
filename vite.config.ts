@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: './',
+  base: '/megahashar/',
   build: {
     outDir: 'dist',
     sourcemap: true,
@@ -21,4 +21,3 @@ export default defineConfig({
     open: true
   }
 })
-
