@@ -1,11 +1,11 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 interface ParallaxSectionProps {
   children: ReactNode;
   speed?: number;
 }
 
-const ParallaxSection: React.FC<ParallaxSectionProps> = ({ children, speed = 0.5 }) => {
+const ParallaxSection: React.FC<ParallaxSectionProps> = ({ children }) => {
   return (
     <div className="parallax-wrapper">
       {children}

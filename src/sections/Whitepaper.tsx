@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const Whitepaper: React.FC = () => {
   const [activeChapter, setActiveChapter] = useState(0);

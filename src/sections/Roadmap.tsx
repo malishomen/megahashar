@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const Roadmap: React.FC = () => {
   const [activePhase, setActivePhase] = useState(0);
