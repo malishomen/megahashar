@@ -87,18 +87,42 @@ const Hero: React.FC = () => {
           </div>
           
           <div className="hero-visual">
-            <div className="nexus-animation">
-              <div className="nexus-core">
-                <div className="core-glow"></div>
+            <div className="heart-orbits-container">
+              {/* Центральная ось энергии */}
+              <div className="energy-axis"></div>
+              
+              {/* Кибер-сердце */}
+              <div className="cyber-heart">
+                <img 
+                  src="/megahashar/assets/megaheart.png" 
+                  alt="MegaHashAr Cyber Heart"
+                  className="heart-image"
+                  onError={(e) => {
+                    // Fallback: показываем градиентное сердце если картинка не загрузилась
+                    e.currentTarget.style.display = 'none';
+                    const parent = e.currentTarget.parentElement;
+                    if (parent) parent.classList.add('fallback-heart');
+                  }}
+                />
+                <div className="heart-glow"></div>
               </div>
-              <div className="nexus-ring ring-1"></div>
-              <div className="nexus-ring ring-2"></div>
-              <div className="nexus-ring ring-3"></div>
-              <div className="nexus-nodes">
-                {[...Array(8)].map((_, i) => (
-                  <div key={i} className="nexus-node" style={{ transform: `rotate(${i * 45}deg)` }}>
-                    <div className="node-glow"></div>
-                  </div>
+              
+              {/* Орбиты вокруг сердца */}
+              <div className="orbit orbit-1"></div>
+              <div className="orbit orbit-2"></div>
+              <div className="orbit orbit-3"></div>
+              
+              {/* Энергетические частицы на орбитах */}
+              <div className="energy-particles">
+                {[...Array(6)].map((_, i) => (
+                  <div 
+                    key={i} 
+                    className="particle" 
+                    style={{ 
+                      '--particle-delay': `${i * 0.5}s`,
+                      '--orbit-radius': `${120 + (i % 3) * 80}px`
+                    } as React.CSSProperties}
+                  ></div>
                 ))}
               </div>
             </div>
@@ -220,111 +244,216 @@ const Hero: React.FC = () => {
           display: flex;
           justify-content: center;
           align-items: center;
+          position: relative;
         }
         
-        .nexus-animation {
-          width: 400px;
-          height: 400px;
+        .heart-orbits-container {
+          width: 450px;
+          height: 450px;
           position: relative;
           animation: float 6s ease-in-out infinite;
         }
         
-        .nexus-core {
+        /* Центральная энергетическая ось */
+        .energy-axis {
           position: absolute;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          width: 80px;
-          height: 80px;
-          background: var(--accent-gold);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 0 50px var(--accent-gold);
-          animation: pulse-gold 3s infinite;
-        }
-        
-        .core-glow {
-          width: 40px;
-          height: 40px;
-          background: white;
-          border-radius: 50%;
-          animation: pulse-white 2s infinite;
-        }
-        
-        .nexus-ring {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          border: 2px solid;
-          border-radius: 50%;
-          transform: translate(-50%, -50%);
-        }
-        
-        .ring-1 {
-          width: 200px;
-          height: 200px;
-          border-color: var(--primary-cyan);
-          animation: rotate 20s linear infinite;
-        }
-        
-        .ring-2 {
-          width: 300px;
+          width: 4px;
           height: 300px;
-          border-color: rgba(0, 188, 212, 0.5);
-          animation: rotate-reverse 25s linear infinite;
+          background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(220, 38, 38, 0.6) 20%,
+            rgba(220, 38, 38, 0.9) 50%,
+            rgba(0, 188, 212, 0.6) 80%,
+            transparent 100%
+          );
+          border-radius: 4px;
+          box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+          animation: axis-pulse 1.3s ease-in-out infinite;
+          z-index: 1;
         }
         
-        .ring-3 {
+        /* Кибер-сердце */
+        .cyber-heart {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 180px;
+          height: 180px;
+          z-index: 10;
+        }
+        
+        .heart-image {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.8));
+          animation: heart-beat 1.3s ease-in-out infinite;
+        }
+        
+        .heart-glow {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 220px;
+          height: 220px;
+          background: radial-gradient(
+            circle,
+            rgba(220, 38, 38, 0.3) 0%,
+            rgba(220, 38, 38, 0.1) 50%,
+            transparent 70%
+          );
+          border-radius: 50%;
+          animation: glow-pulse 1.3s ease-in-out infinite;
+          z-index: -1;
+        }
+        
+        /* Fallback градиентное сердце */
+        .cyber-heart.fallback-heart::before {
+          content: '❤️';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: 140px;
+          filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.8));
+        }
+        
+        /* Орбиты */
+        .orbit {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          border-radius: 50%;
+          border: 2px solid;
+          z-index: 5;
+        }
+        
+        .orbit-1 {
+          width: 240px;
+          height: 240px;
+          border-color: rgba(0, 188, 212, 0.6);
+          animation: rotate 15s linear infinite, orbit-pulse 1.3s ease-in-out infinite;
+        }
+        
+        .orbit-2 {
+          width: 320px;
+          height: 320px;
+          border-color: rgba(0, 188, 212, 0.4);
+          animation: rotate-reverse 20s linear infinite, orbit-pulse 1.3s ease-in-out infinite 0.2s;
+        }
+        
+        .orbit-3 {
           width: 400px;
           height: 400px;
-          border-color: rgba(0, 188, 212, 0.2);
-          animation: rotate 30s linear infinite;
+          border-color: rgba(0, 188, 212, 0.25);
+          animation: rotate 25s linear infinite, orbit-pulse 1.3s ease-in-out infinite 0.4s;
         }
         
-        .nexus-nodes {
+        /* Энергетические частицы */
+        .energy-particles {
           position: absolute;
           top: 0;
           left: 0;
-          right: 0;
-          bottom: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 8;
         }
         
-        .nexus-node {
+        .particle {
           position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 200px;
-          height: 200px;
-          transform-origin: 50% 50%;
-        }
-        
-        .node-glow {
-          width: 12px;
-          height: 12px;
+          width: 8px;
+          height: 8px;
           background: var(--primary-cyan);
           border-radius: 50%;
-          position: absolute;
-          top: 0;
+          top: 50%;
           left: 50%;
-          transform: translateX(-50%);
-          animation: glow 2s infinite;
+          box-shadow: 0 0 15px var(--primary-cyan);
+          animation: orbit-move 4s linear infinite;
+          animation-delay: var(--particle-delay);
         }
         
+        /* Анимации */
         @keyframes float {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-20px); }
         }
         
-        @keyframes pulse-gold {
-          0%, 100% { box-shadow: 0 0 50px var(--accent-gold); }
-          50% { box-shadow: 0 0 80px var(--accent-gold); }
+        @keyframes heart-beat {
+          0%, 100% { 
+            transform: scale(1);
+            filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.8));
+          }
+          14% { 
+            transform: scale(1.08);
+            filter: drop-shadow(0 0 45px rgba(220, 38, 38, 1));
+          }
+          28% { 
+            transform: scale(1.02);
+            filter: drop-shadow(0 0 35px rgba(220, 38, 38, 0.85));
+          }
+          42% { 
+            transform: scale(1.06);
+            filter: drop-shadow(0 0 40px rgba(220, 38, 38, 0.95));
+          }
+          70% { 
+            transform: scale(1);
+            filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.8));
+          }
         }
         
-        @keyframes pulse-white {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.2); opacity: 0.8; }
+        @keyframes glow-pulse {
+          0%, 100% { 
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.6;
+          }
+          14% { 
+            transform: translate(-50%, -50%) scale(1.15);
+            opacity: 1;
+          }
+          28% { 
+            transform: translate(-50%, -50%) scale(1.05);
+            opacity: 0.8;
+          }
+          42% { 
+            transform: translate(-50%, -50%) scale(1.1);
+            opacity: 0.9;
+          }
+          70% { 
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.6;
+          }
+        }
+        
+        @keyframes axis-pulse {
+          0%, 100% { 
+            opacity: 0.7;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+          }
+          14%, 42% { 
+            opacity: 1;
+            box-shadow: 0 0 35px rgba(220, 38, 38, 0.9);
+          }
+          28% { 
+            opacity: 0.85;
+            box-shadow: 0 0 25px rgba(220, 38, 38, 0.7);
+          }
+        }
+        
+        @keyframes orbit-pulse {
+          0%, 100% { 
+            opacity: 0.6;
+          }
+          14%, 42% { 
+            opacity: 1;
+            box-shadow: 0 0 15px var(--primary-cyan);
+          }
         }
         
         @keyframes rotate {
@@ -337,9 +466,19 @@ const Hero: React.FC = () => {
           to { transform: translate(-50%, -50%) rotate(0deg); }
         }
         
-        @keyframes glow {
-          0%, 100% { opacity: 0.5; }
-          50% { opacity: 1; }
+        @keyframes orbit-move {
+          from { 
+            transform: translate(-50%, -50%) 
+                       rotate(0deg) 
+                       translateX(var(--orbit-radius)) 
+                       rotate(0deg);
+          }
+          to { 
+            transform: translate(-50%, -50%) 
+                       rotate(360deg) 
+                       translateX(var(--orbit-radius)) 
+                       rotate(-360deg);
+          }
         }
         
         @media (max-width: 1024px) {
@@ -365,9 +504,27 @@ const Hero: React.FC = () => {
             justify-content: center;
           }
           
-          .nexus-animation {
-            width: 300px;
-            height: 300px;
+          .heart-orbits-container {
+            width: 350px;
+            height: 350px;
+          }
+          
+          .cyber-heart {
+            width: 140px;
+            height: 140px;
+          }
+          
+          .heart-glow {
+            width: 170px;
+            height: 170px;
+          }
+          
+          .orbit-1 { width: 200px; height: 200px; }
+          .orbit-2 { width: 260px; height: 260px; }
+          .orbit-3 { width: 320px; height: 320px; }
+          
+          .energy-axis {
+            height: 240px;
           }
         }
         
@@ -382,6 +539,35 @@ const Hero: React.FC = () => {
           
           .hero-actions {
             flex-direction: column;
+          }
+          
+          .heart-orbits-container {
+            width: 280px;
+            height: 280px;
+          }
+          
+          .cyber-heart {
+            width: 110px;
+            height: 110px;
+          }
+          
+          .heart-glow {
+            width: 140px;
+            height: 140px;
+          }
+          
+          .orbit-1 { width: 160px; height: 160px; }
+          .orbit-2 { width: 210px; height: 210px; }
+          .orbit-3 { width: 260px; height: 260px; }
+          
+          .energy-axis {
+            height: 200px;
+            width: 3px;
+          }
+          
+          .particle {
+            width: 6px;
+            height: 6px;
           }
         }
       `}</style>
