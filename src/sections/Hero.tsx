@@ -86,17 +86,11 @@ const Hero: React.FC = () => {
           </div>
           
           <div className="hero-visual">
-            {/* Видео hero.mp4 в hero-секции */}
-            <div className="hero-video-container">
-              <video
-                className="hero-video"
-                src="/megahashar/assets/hero.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-              />
-              <div className="hero-video-overlay"></div>
+            {/* Минималистичный визуальный акцент */}
+            <div className="hero-visual-accent">
+              <div className="accent-circle accent-circle-1"></div>
+              <div className="accent-circle accent-circle-2"></div>
+              <div className="accent-circle accent-circle-3"></div>
             </div>
           </div>
         </div>
@@ -217,7 +211,7 @@ const Hero: React.FC = () => {
           transform: translateY(-3px);
         }
         
-        /* Hero видео справа */
+        /* Минималистичный визуальный акцент справа */
         .hero-visual {
           display: flex;
           justify-content: center;
@@ -225,36 +219,45 @@ const Hero: React.FC = () => {
           position: relative;
         }
         
-        .hero-video-container {
+        .hero-visual-accent {
           position: relative;
-          width: 100%;
-          max-width: 600px;
-          aspect-ratio: 16 / 9;
-          border-radius: 20px;
-          overflow: hidden;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+          width: 400px;
+          height: 400px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         
-        .hero-video {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          display: block;
-        }
-        
-        .hero-video-overlay {
+        .accent-circle {
           position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: radial-gradient(
-            circle at center,
-            transparent 20%,
-            rgba(10, 25, 47, 0.2) 60%,
-            rgba(10, 25, 47, 0.4) 100%
-          );
-          pointer-events: none;
+          border-radius: 50%;
+          border: 2px solid;
+        }
+        
+        .accent-circle-1 {
+          width: 200px;
+          height: 200px;
+          border-color: rgba(0, 188, 212, 0.3);
+          animation: rotate-slow 20s linear infinite;
+        }
+        
+        .accent-circle-2 {
+          width: 300px;
+          height: 300px;
+          border-color: rgba(0, 188, 212, 0.2);
+          animation: rotate-slow 30s linear infinite reverse;
+        }
+        
+        .accent-circle-3 {
+          width: 400px;
+          height: 400px;
+          border-color: rgba(0, 188, 212, 0.1);
+          animation: rotate-slow 40s linear infinite;
+        }
+        
+        @keyframes rotate-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
         
         @media (max-width: 1024px) {
@@ -280,9 +283,14 @@ const Hero: React.FC = () => {
             justify-content: center;
           }
           
-          .hero-video-container {
-            max-width: 500px;
+          .hero-visual-accent {
+            width: 300px;
+            height: 300px;
           }
+          
+          .accent-circle-1 { width: 150px; height: 150px; }
+          .accent-circle-2 { width: 225px; height: 225px; }
+          .accent-circle-3 { width: 300px; height: 300px; }
         }
         
         @media (max-width: 768px) {
@@ -298,9 +306,14 @@ const Hero: React.FC = () => {
             flex-direction: column;
           }
           
-          .hero-video-container {
-            max-width: 100%;
+          .hero-visual-accent {
+            width: 250px;
+            height: 250px;
           }
+          
+          .accent-circle-1 { width: 120px; height: 120px; }
+          .accent-circle-2 { width: 185px; height: 185px; }
+          .accent-circle-3 { width: 250px; height: 250px; }
         }
       `}</style>
     </>
