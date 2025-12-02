@@ -1,4 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+
+interface Particle {
+  id: number;
+  x: number;
+  y: number;
+  baseX: number;
+  baseY: number;
+  vx: number;
+  vy: number;
+}
 
 const Hero: React.FC = () => {
   const [counters, setCounters] = useState({
@@ -6,6 +16,12 @@ const Hero: React.FC = () => {
     tasks: 0,
     cities: 1
   });
+  
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const [isInHeroSection, setIsInHeroSection] = useState(false);
+  const animationFrameRef = useRef<number>();
 
   useEffect(() => {
     const animateCounters = () => {
@@ -35,10 +51,107 @@ const Hero: React.FC = () => {
     const timer = setTimeout(animateCounters, 500);
     return () => clearTimeout(timer);
   }, []);
+  
+  // Инициализация золотых частиц
+  useEffect(() => {
+    const initParticles: Particle[] = [];
+    for (let i = 0; i < 30; i++) {
+      initParticles.push({
+        id: i,
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        baseX: Math.random() * window.innerWidth,
+        baseY: Math.random() * window.innerHeight,
+        vx: 0,
+        vy: 0
+      });
+    }
+    setParticles(initParticles);
+  }, []);
+  
+  // Отслеживание мыши и обновление частиц
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+      
+      // Проверка нахождения в hero секции
+      if (heroRef.current) {
+        const rect = heroRef.current.getBoundingClientRect();
+        const inSection = rect.top <= window.innerHeight && rect.bottom >= 0;
+        setIsInHeroSection(inSection);
+      }
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+  
+  // Анимация частиц с магнитным эффектом
+  useEffect(() => {
+    const animateParticles = () => {
+      if (!isInHeroSection) {
+        animationFrameRef.current = requestAnimationFrame(animateParticles);
+        return;
+      }
+      
+      setParticles(prev => prev.map(particle => {
+        const dx = mousePosition.x - particle.x;
+        const dy = mousePosition.y - particle.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const magnetRange = 200;
+        
+        if (distance < magnetRange && distance > 0) {
+          const force = (magnetRange - distance) / magnetRange;
+          const angle = Math.atan2(dy, dx);
+          particle.vx += Math.cos(angle) * force * 0.5;
+          particle.vy += Math.sin(angle) * force * 0.5;
+        }
+        
+        // Возврат к базовой позиции
+        const returnForce = 0.05;
+        particle.vx += (particle.baseX - particle.x) * returnForce;
+        particle.vy += (particle.baseY - particle.y) * returnForce;
+        
+        // Применение скорости с затуханием
+        particle.vx *= 0.95;
+        particle.vy *= 0.95;
+        
+        return {
+          ...particle,
+          x: particle.x + particle.vx,
+          y: particle.y + particle.vy
+        };
+      }));
+      
+      animationFrameRef.current = requestAnimationFrame(animateParticles);
+    };
+    
+    animationFrameRef.current = requestAnimationFrame(animateParticles);
+    
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [mousePosition, isInHeroSection]);
 
   return (
     <>
-      <div className="hero-section">
+      {/* Золотые частицы */}
+      <div className="golden-particles">
+        {particles.map(particle => (
+          <div
+            key={particle.id}
+            className="particle-golden"
+            style={{
+              left: `${particle.x}px`,
+              top: `${particle.y}px`
+            }}
+          />
+        ))}
+      </div>
+      
+      <div className="hero-section" ref={heroRef}>
         <div className="hero-content">
           <div className="hero-text">
             <h1 className="hero-title">
@@ -86,17 +199,46 @@ const Hero: React.FC = () => {
           </div>
           
           <div className="hero-visual">
-            {/* Минималистичный визуальный акцент */}
-            <div className="hero-visual-accent">
-              <div className="accent-circle accent-circle-1"></div>
-              <div className="accent-circle accent-circle-2"></div>
-              <div className="accent-circle accent-circle-3"></div>
+            {/* Hero видео hero3.mp4 */}
+            <div className="hero-video-wrapper">
+              <video
+                className="hero-video-media"
+                src="/megahashar/assets/hero3.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+              />
+              <div className="hero-video-gradient"></div>
             </div>
           </div>
         </div>
       </div>
       
       <style>{`
+        /* Золотые частицы */
+        .golden-particles {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          z-index: 100;
+        }
+        
+        .particle-golden {
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          background: var(--accent-gold);
+          border-radius: 50%;
+          box-shadow: 0 0 10px var(--accent-gold),
+                      0 0 20px var(--accent-gold);
+          transition: none;
+          will-change: transform;
+        }
+        
         .hero-section {
           min-height: 100vh;
           display: flex;
@@ -211,7 +353,7 @@ const Hero: React.FC = () => {
           transform: translateY(-3px);
         }
         
-        /* Минималистичный визуальный акцент справа */
+        /* Hero видео справа */
         .hero-visual {
           display: flex;
           justify-content: center;
@@ -219,45 +361,38 @@ const Hero: React.FC = () => {
           position: relative;
         }
         
-        .hero-visual-accent {
+        .hero-video-wrapper {
           position: relative;
-          width: 400px;
-          height: 400px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          width: 100%;
+          max-width: 550px;
+          aspect-ratio: 16 / 9;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.6),
+            0 0 80px rgba(255, 215, 0, 0.1);
+          border: 1px solid rgba(255, 215, 0, 0.2);
         }
         
-        .accent-circle {
+        .hero-video-media {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+        
+        .hero-video-gradient {
           position: absolute;
-          border-radius: 50%;
-          border: 2px solid;
-        }
-        
-        .accent-circle-1 {
-          width: 200px;
-          height: 200px;
-          border-color: rgba(0, 188, 212, 0.3);
-          animation: rotate-slow 20s linear infinite;
-        }
-        
-        .accent-circle-2 {
-          width: 300px;
-          height: 300px;
-          border-color: rgba(0, 188, 212, 0.2);
-          animation: rotate-slow 30s linear infinite reverse;
-        }
-        
-        .accent-circle-3 {
-          width: 400px;
-          height: 400px;
-          border-color: rgba(0, 188, 212, 0.1);
-          animation: rotate-slow 40s linear infinite;
-        }
-        
-        @keyframes rotate-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: radial-gradient(
+            circle at center,
+            transparent 30%,
+            rgba(10, 25, 47, 0.3) 80%
+          );
+          pointer-events: none;
         }
         
         @media (max-width: 1024px) {
@@ -283,14 +418,9 @@ const Hero: React.FC = () => {
             justify-content: center;
           }
           
-          .hero-visual-accent {
-            width: 300px;
-            height: 300px;
+          .hero-video-wrapper {
+            max-width: 450px;
           }
-          
-          .accent-circle-1 { width: 150px; height: 150px; }
-          .accent-circle-2 { width: 225px; height: 225px; }
-          .accent-circle-3 { width: 300px; height: 300px; }
         }
         
         @media (max-width: 768px) {
@@ -306,14 +436,14 @@ const Hero: React.FC = () => {
             flex-direction: column;
           }
           
-          .hero-visual-accent {
-            width: 250px;
-            height: 250px;
+          .hero-video-wrapper {
+            max-width: 100%;
           }
           
-          .accent-circle-1 { width: 120px; height: 120px; }
-          .accent-circle-2 { width: 185px; height: 185px; }
-          .accent-circle-3 { width: 250px; height: 250px; }
+          .particle-golden {
+            width: 3px;
+            height: 3px;
+          }
         }
       `}</style>
     </>
