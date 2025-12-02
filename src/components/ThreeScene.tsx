@@ -209,9 +209,11 @@ const ThreeScene: React.FC = () => {
           enablePan={false}
           enableRotate={true}
           autoRotate={true}
-          autoRotateSpeed={0.3}
+          autoRotateSpeed={0.2}
           maxPolarAngle={Math.PI}
           minPolarAngle={0}
+          enableDamping={true}
+          dampingFactor={0.05}
         />
         
         <fog attach="fog" args={['#0a192f', 10, 25]} />

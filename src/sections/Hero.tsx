@@ -7,6 +7,9 @@ const Hero: React.FC = () => {
     tasks: 0,
     cities: 1
   });
+  
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
     const animateCounters = () => {
@@ -36,6 +39,32 @@ const Hero: React.FC = () => {
     const timer = setTimeout(animateCounters, 500);
     return () => clearTimeout(timer);
   }, []);
+  
+  // Параллакс-эффект на движение мыши
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      setMousePosition({ x, y });
+    };
+    
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+  
+  // Расчет параллакса для визуального блока
+  const parallaxStyle = {
+    transform: `translate(${mousePosition.x * 10}px, ${mousePosition.y * 10 - scrollY * 0.3}px) rotateY(${mousePosition.x * 2}deg) rotateX(${-mousePosition.y * 2}deg)`
+  };
 
   return (
     <>
@@ -87,7 +116,8 @@ const Hero: React.FC = () => {
           </div>
           
           <div className="hero-visual">
-            <div className="heart-orbits-container">
+            <div className="hero-visual-overlay"></div>
+            <div className="heart-orbits-container" style={parallaxStyle}>
               {/* Центральная ось энергии */}
               <div className="energy-axis"></div>
               
@@ -167,6 +197,7 @@ const Hero: React.FC = () => {
           font-weight: 800;
           line-height: 1.2;
           margin-bottom: 30px;
+          text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
         }
         
         .hero-subtitle {
@@ -175,6 +206,14 @@ const Hero: React.FC = () => {
           color: var(--gray-text);
           margin-bottom: 50px;
           max-width: 600px;
+          text-shadow: 0 1px 10px rgba(0, 0, 0, 0.8);
+          background: linear-gradient(
+            to right,
+            rgba(10, 25, 47, 0.7),
+            transparent 80%
+          );
+          padding: 10px 20px 10px 0;
+          border-radius: 10px;
         }
         
         .hero-stats {
@@ -185,17 +224,20 @@ const Hero: React.FC = () => {
         }
         
         .stat-card {
-          background: rgba(17, 34, 64, 0.7);
-          border: 1px solid rgba(0, 188, 212, 0.1);
+          background: rgba(17, 34, 64, 0.9);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(0, 188, 212, 0.2);
           border-radius: 15px;
           padding: 20px;
           transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
         
         .stat-card:hover {
-          transform: translateY(-5px);
+          transform: translateY(-5px) scale(1.02);
           border-color: var(--primary-cyan);
-          box-shadow: 0 10px 20px rgba(0, 188, 212, 0.1);
+          box-shadow: 0 10px 30px rgba(0, 188, 212, 0.3);
+          background: rgba(17, 34, 64, 0.95);
         }
         
         .stat-number {
@@ -245,6 +287,23 @@ const Hero: React.FC = () => {
           justify-content: center;
           align-items: center;
           position: relative;
+          perspective: 1000px;
+        }
+        
+        .hero-visual-overlay {
+          position: absolute;
+          top: 0;
+          left: -20%;
+          width: 140%;
+          height: 100%;
+          background: radial-gradient(
+            ellipse at center,
+            transparent 0%,
+            rgba(10, 25, 47, 0.3) 50%,
+            rgba(10, 25, 47, 0.8) 100%
+          );
+          pointer-events: none;
+          z-index: 5;
         }
         
         .heart-orbits-container {
@@ -252,6 +311,9 @@ const Hero: React.FC = () => {
           height: 450px;
           position: relative;
           animation: float 6s ease-in-out infinite;
+          transition: transform 0.1s ease-out;
+          transform-style: preserve-3d;
+          will-change: transform;
         }
         
         /* Центральная энергетическая ось */

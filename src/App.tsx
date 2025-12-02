@@ -9,6 +9,7 @@ import Roadmap from './sections/Roadmap';
 import Analytics from './sections/Analytics';
 import FAQ from './sections/FAQ';
 import './styles/globals.css';
+import './styles/performance.css';
 
 function App() {
   useEffect(() => {
