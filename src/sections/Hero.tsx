@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import '../styles/animations.css';
 
 const Hero: React.FC = () => {
   const [counters, setCounters] = useState({
@@ -7,9 +6,6 @@ const Hero: React.FC = () => {
     tasks: 0,
     cities: 1
   });
-  
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
     const animateCounters = () => {
@@ -39,32 +35,6 @@ const Hero: React.FC = () => {
     const timer = setTimeout(animateCounters, 500);
     return () => clearTimeout(timer);
   }, []);
-  
-  // Параллакс-эффект на движение мыши
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 2;
-      const y = (e.clientY / window.innerHeight - 0.5) * 2;
-      setMousePosition({ x, y });
-    };
-    
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll);
-    
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-  
-  // Расчет параллакса для визуального блока
-  const parallaxStyle = {
-    transform: `translate(${mousePosition.x * 10}px, ${mousePosition.y * 10 - scrollY * 0.3}px) rotateY(${mousePosition.x * 2}deg) rotateX(${-mousePosition.y * 2}deg)`
-  };
 
   return (
     <>
@@ -116,45 +86,16 @@ const Hero: React.FC = () => {
           </div>
           
           <div className="hero-visual">
-            <div className="hero-visual-overlay"></div>
-            <div className="heart-orbits-container" style={parallaxStyle}>
-              {/* Центральная ось энергии */}
-              <div className="energy-axis"></div>
-              
-              {/* Кибер-сердце */}
-              <div className="cyber-heart">
-                <img 
-                  src="/megahashar/assets/megaheart.png" 
-                  alt="MegaHashAr Cyber Heart"
-                  className="heart-image"
-                  onError={(e) => {
-                    // Fallback: показываем градиентное сердце если картинка не загрузилась
-                    e.currentTarget.style.display = 'none';
-                    const parent = e.currentTarget.parentElement;
-                    if (parent) parent.classList.add('fallback-heart');
-                  }}
-                />
-                <div className="heart-glow"></div>
-              </div>
-              
-              {/* Орбиты вокруг сердца */}
-              <div className="orbit orbit-1"></div>
-              <div className="orbit orbit-2"></div>
-              <div className="orbit orbit-3"></div>
-              
-              {/* Энергетические частицы на орбитах */}
-              <div className="energy-particles">
-                {[...Array(6)].map((_, i) => (
-                  <div 
-                    key={i} 
-                    className="particle" 
-                    style={{ 
-                      '--particle-delay': `${i * 0.5}s`,
-                      '--orbit-radius': `${120 + (i % 3) * 80}px`
-                    } as React.CSSProperties}
-                  ></div>
-                ))}
-              </div>
+            <div className="hero-heart-video">
+              <video
+                className="hero-heart-video__media"
+                src="/megahashar/assets/megaheart_bg.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+              />
+              <div className="hero-heart-video__overlay"></div>
             </div>
           </div>
         </div>
@@ -207,13 +148,6 @@ const Hero: React.FC = () => {
           margin-bottom: 50px;
           max-width: 600px;
           text-shadow: 0 1px 10px rgba(0, 0, 0, 0.8);
-          background: linear-gradient(
-            to right,
-            rgba(10, 25, 47, 0.7),
-            transparent 80%
-          );
-          padding: 10px 20px 10px 0;
-          border-radius: 10px;
         }
         
         .hero-stats {
@@ -282,265 +216,44 @@ const Hero: React.FC = () => {
           transform: translateY(-3px);
         }
         
+        /* Видео-блок с кибер-сердцем */
         .hero-visual {
           display: flex;
           justify-content: center;
           align-items: center;
           position: relative;
-          perspective: 1000px;
         }
         
-        .hero-visual-overlay {
-          position: absolute;
-          top: 0;
-          left: -20%;
-          width: 140%;
-          height: 100%;
-          background: radial-gradient(
-            ellipse at center,
-            transparent 0%,
-            rgba(10, 25, 47, 0.3) 50%,
-            rgba(10, 25, 47, 0.8) 100%
-          );
-          pointer-events: none;
-          z-index: 5;
-        }
-        
-        .heart-orbits-container {
-          width: 450px;
-          height: 450px;
+        .hero-heart-video {
           position: relative;
-          animation: float 6s ease-in-out infinite;
-          transition: transform 0.1s ease-out;
-          transform-style: preserve-3d;
-          will-change: transform;
+          width: 100%;
+          max-width: 600px;
+          aspect-ratio: 16 / 9;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
         }
         
-        /* Центральная энергетическая ось */
-        .energy-axis {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 4px;
-          height: 300px;
-          background: linear-gradient(
-            to bottom,
-            transparent 0%,
-            rgba(220, 38, 38, 0.6) 20%,
-            rgba(220, 38, 38, 0.9) 50%,
-            rgba(0, 188, 212, 0.6) 80%,
-            transparent 100%
-          );
-          border-radius: 4px;
-          box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
-          animation: axis-pulse 1.3s ease-in-out infinite;
-          z-index: 1;
-        }
-        
-        /* Кибер-сердце */
-        .cyber-heart {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 180px;
-          height: 180px;
-          z-index: 10;
-        }
-        
-        .heart-image {
+        .hero-heart-video__media {
           width: 100%;
           height: 100%;
-          object-fit: contain;
-          filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.8));
-          animation: heart-beat 1.3s ease-in-out infinite;
+          object-fit: cover;
+          display: block;
         }
         
-        .heart-glow {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 220px;
-          height: 220px;
-          background: radial-gradient(
-            circle,
-            rgba(220, 38, 38, 0.3) 0%,
-            rgba(220, 38, 38, 0.1) 50%,
-            transparent 70%
-          );
-          border-radius: 50%;
-          animation: glow-pulse 1.3s ease-in-out infinite;
-          z-index: -1;
-        }
-        
-        /* Fallback градиентное сердце */
-        .cyber-heart.fallback-heart::before {
-          content: '❤️';
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          font-size: 140px;
-          filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.8));
-        }
-        
-        /* Орбиты */
-        .orbit {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          border-radius: 50%;
-          border: 2px solid;
-          z-index: 5;
-        }
-        
-        .orbit-1 {
-          width: 240px;
-          height: 240px;
-          border-color: rgba(0, 188, 212, 0.6);
-          animation: rotate 15s linear infinite, orbit-pulse 1.3s ease-in-out infinite;
-        }
-        
-        .orbit-2 {
-          width: 320px;
-          height: 320px;
-          border-color: rgba(0, 188, 212, 0.4);
-          animation: rotate-reverse 20s linear infinite, orbit-pulse 1.3s ease-in-out infinite 0.2s;
-        }
-        
-        .orbit-3 {
-          width: 400px;
-          height: 400px;
-          border-color: rgba(0, 188, 212, 0.25);
-          animation: rotate 25s linear infinite, orbit-pulse 1.3s ease-in-out infinite 0.4s;
-        }
-        
-        /* Энергетические частицы */
-        .energy-particles {
+        .hero-heart-video__overlay {
           position: absolute;
           top: 0;
           left: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 8;
-        }
-        
-        .particle {
-          position: absolute;
-          width: 8px;
-          height: 8px;
-          background: var(--primary-cyan);
-          border-radius: 50%;
-          top: 50%;
-          left: 50%;
-          box-shadow: 0 0 15px var(--primary-cyan);
-          animation: orbit-move 4s linear infinite;
-          animation-delay: var(--particle-delay);
-        }
-        
-        /* Анимации */
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-20px); }
-        }
-        
-        @keyframes heart-beat {
-          0%, 100% { 
-            transform: scale(1);
-            filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.8));
-          }
-          14% { 
-            transform: scale(1.08);
-            filter: drop-shadow(0 0 45px rgba(220, 38, 38, 1));
-          }
-          28% { 
-            transform: scale(1.02);
-            filter: drop-shadow(0 0 35px rgba(220, 38, 38, 0.85));
-          }
-          42% { 
-            transform: scale(1.06);
-            filter: drop-shadow(0 0 40px rgba(220, 38, 38, 0.95));
-          }
-          70% { 
-            transform: scale(1);
-            filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.8));
-          }
-        }
-        
-        @keyframes glow-pulse {
-          0%, 100% { 
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 0.6;
-          }
-          14% { 
-            transform: translate(-50%, -50%) scale(1.15);
-            opacity: 1;
-          }
-          28% { 
-            transform: translate(-50%, -50%) scale(1.05);
-            opacity: 0.8;
-          }
-          42% { 
-            transform: translate(-50%, -50%) scale(1.1);
-            opacity: 0.9;
-          }
-          70% { 
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 0.6;
-          }
-        }
-        
-        @keyframes axis-pulse {
-          0%, 100% { 
-            opacity: 0.7;
-            box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
-          }
-          14%, 42% { 
-            opacity: 1;
-            box-shadow: 0 0 35px rgba(220, 38, 38, 0.9);
-          }
-          28% { 
-            opacity: 0.85;
-            box-shadow: 0 0 25px rgba(220, 38, 38, 0.7);
-          }
-        }
-        
-        @keyframes orbit-pulse {
-          0%, 100% { 
-            opacity: 0.6;
-          }
-          14%, 42% { 
-            opacity: 1;
-            box-shadow: 0 0 15px var(--primary-cyan);
-          }
-        }
-        
-        @keyframes rotate {
-          from { transform: translate(-50%, -50%) rotate(0deg); }
-          to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        
-        @keyframes rotate-reverse {
-          from { transform: translate(-50%, -50%) rotate(360deg); }
-          to { transform: translate(-50%, -50%) rotate(0deg); }
-        }
-        
-        @keyframes orbit-move {
-          from { 
-            transform: translate(-50%, -50%) 
-                       rotate(0deg) 
-                       translateX(var(--orbit-radius)) 
-                       rotate(0deg);
-          }
-          to { 
-            transform: translate(-50%, -50%) 
-                       rotate(360deg) 
-                       translateX(var(--orbit-radius)) 
-                       rotate(-360deg);
-          }
+          right: 0;
+          bottom: 0;
+          background: radial-gradient(
+            circle at center,
+            transparent 30%,
+            rgba(10, 25, 47, 0.3) 70%,
+            rgba(10, 25, 47, 0.6) 100%
+          );
+          pointer-events: none;
         }
         
         @media (max-width: 1024px) {
@@ -566,27 +279,8 @@ const Hero: React.FC = () => {
             justify-content: center;
           }
           
-          .heart-orbits-container {
-            width: 350px;
-            height: 350px;
-          }
-          
-          .cyber-heart {
-            width: 140px;
-            height: 140px;
-          }
-          
-          .heart-glow {
-            width: 170px;
-            height: 170px;
-          }
-          
-          .orbit-1 { width: 200px; height: 200px; }
-          .orbit-2 { width: 260px; height: 260px; }
-          .orbit-3 { width: 320px; height: 320px; }
-          
-          .energy-axis {
-            height: 240px;
+          .hero-heart-video {
+            max-width: 500px;
           }
         }
         
@@ -603,33 +297,8 @@ const Hero: React.FC = () => {
             flex-direction: column;
           }
           
-          .heart-orbits-container {
-            width: 280px;
-            height: 280px;
-          }
-          
-          .cyber-heart {
-            width: 110px;
-            height: 110px;
-          }
-          
-          .heart-glow {
-            width: 140px;
-            height: 140px;
-          }
-          
-          .orbit-1 { width: 160px; height: 160px; }
-          .orbit-2 { width: 210px; height: 210px; }
-          .orbit-3 { width: 260px; height: 260px; }
-          
-          .energy-axis {
-            height: 200px;
-            width: 3px;
-          }
-          
-          .particle {
-            width: 6px;
-            height: 6px;
+          .hero-heart-video {
+            max-width: 100%;
           }
         }
       `}</style>
@@ -638,4 +307,3 @@ const Hero: React.FC = () => {
 };
 
 export default Hero;
-
